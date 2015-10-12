@@ -1,17 +1,18 @@
 package com.example.pouyakarimi.testappone;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 
-import com.example.pouyakarimi.testappone.objects.Notes;
+import com.example.pouyakarimi.testappone.objects.Note;
 
 import java.util.ArrayList;
 
@@ -21,8 +22,7 @@ public class PlusActivity extends AppCompatActivity {
     TableLayout tableLayout;
     TableRow tableRow;
     EditText editText;
-    Notes notes;
-    ArrayList<Notes> notesList;
+    Note note;
 
 
     @Override
@@ -32,7 +32,6 @@ public class PlusActivity extends AppCompatActivity {
         next = (Button) findViewById(R.id.newPlus);
         tableLayout = (TableLayout) findViewById(R.id.tableLayout1);
         tableLayout.setColumnStretchable(0, true);
-        notesList = (ArrayList) getIntent().getSerializableExtra(MainActivity.SER_KEY);
 
     }
 
@@ -64,11 +63,14 @@ public class PlusActivity extends AppCompatActivity {
 //        textView.setText("hello");
 //        textView.setTextSize(15);
 //        textView.setGravity(Gravity.CENTER);
-        notes = new Notes();
+        note = new Note();
         editText = new EditText(this);
-        notes.setText(editText.getText().toString());
-        notes.setIsItPlus(true);
-        notesList.add(notes);
+        editText.setFocusable(true);
+        editText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+        note.setText(editText.getText().toString());
+        note.setIsItPlus(true);
         tableRow.addView(editText);
         tableLayout.addView(tableRow);
     }

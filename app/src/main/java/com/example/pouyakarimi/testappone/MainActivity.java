@@ -7,14 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.pouyakarimi.testappone.objects.Notes;
+import com.example.pouyakarimi.testappone.objects.Note;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<Notes> notesList = new ArrayList<>();
-    public  final static String SER_KEY = "com.easyinfogeek.objectPass.ser";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,27 +42,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        if (notesList.get(0) != null){
-            System.out.println("list" + notesList.get(0).getText());
-        }
-    }
 
-    public void openNewPage(View v){
+    public void openNewPage(View v) {
         Intent intent = new Intent(getApplicationContext(), PlusActivity.class);
-        Bundle mBundle = new Bundle();
-        mBundle.putSerializable(SER_KEY, notesList);
-        intent.putExtras(mBundle);
         startActivity(intent);
     }
 
-    public void viewAll(View v){
+    public void viewAll(View v) {
         Intent intent = new Intent(getApplicationContext(), ViewAll.class);
-        Bundle mBundle = new Bundle();
-        mBundle.putSerializable(SER_KEY, notesList);
-        intent.putExtras(mBundle);
         startActivity(intent);
     }
 }

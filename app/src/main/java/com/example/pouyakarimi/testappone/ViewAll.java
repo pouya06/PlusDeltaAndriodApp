@@ -6,21 +6,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.example.pouyakarimi.testappone.objects.Notes;
+import com.example.pouyakarimi.testappone.objects.Note;
 
 import java.util.ArrayList;
 
 public class ViewAll extends AppCompatActivity {
 
-    TextView textView = (TextView) findViewById(R.id.viewOne);
-    ArrayList<Notes> notesList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all);
-        notesList = (ArrayList) getIntent().getSerializableExtra(MainActivity.SER_KEY);
-        textView.setText(notesList.get(0).getText());
     }
 
     @Override
