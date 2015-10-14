@@ -1,8 +1,14 @@
 package com.example.pouyakarimi.testappone;
 
+import android.annotation.TargetApi;
+import android.content.ContentValues;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,18 +17,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.Toast;
 
+import com.example.pouyakarimi.testappone.database.NoteDBHandler;
 import com.example.pouyakarimi.testappone.objects.Note;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class PlusActivity extends AppCompatActivity {
 
-    Button next;
-    TableLayout tableLayout;
-    TableRow tableRow;
-    EditText editText;
-    Note note;
+    private Button next;
+    private Button save;
+    private TableLayout tableLayout;
+    private TableRow tableRow;
+    private EditText editText;
+    private Note note;
+    private NoteDBHandler noteDBHandler;
+    private Toast toast;
+    private ContentValues values;
+    int counter = 0;
+
+    private static final String SAVED_MESSAGE = "Saved!";
 
 
     @Override
@@ -30,9 +46,12 @@ public class PlusActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plus);
         next = (Button) findViewById(R.id.newPlus);
+        save = (Button) findViewById(R.id.saveRow);
         tableLayout = (TableLayout) findViewById(R.id.tableLayout1);
         tableLayout.setColumnStretchable(0, true);
-
+        noteDBHandler = new NoteDBHandler(this, null, null, 1);
+        note = new Note();
+        values = new ContentValues();
     }
 
     @Override
@@ -57,21 +76,42 @@ public class PlusActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void nextRow(View v){
+
+    public void nextRow(View v) {
+//        note = new Note();
+//        note.setText(editText.getText().toString());
+//        note.setIsItPlus(true);
+//        noteDBHandler.addNewRow(note);
         tableRow = new TableRow(this);
-//        textView = new TextView(this);
-//        textView.setText("hello");
-//        textView.setTextSize(15);
-//        textView.setGravity(Gravity.CENTER);
-        note = new Note();
+
         editText = new EditText(this);
-        editText.setFocusable(true);
         editText.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-        note.setText(editText.getText().toString());
-        note.setIsItPlus(true);
+        editText.setId(counter ++);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                toast.makeText(getApplicationContext(), String.valueOf(editText.getId()), Toast.LENGTH_LONG).show();
+                values.put(String.valueOf(editText.getId()), s.toString());
+            }
+        });
+
         tableRow.addView(editText);
         tableLayout.addView(tableRow);
+    }
+
+    public void saveRow(View v) {
+
+        toast.makeText(this, SAVED_MESSAGE, Toast.LENGTH_LONG).show();
+
     }
 }

@@ -2,6 +2,7 @@ package com.example.pouyakarimi.testappone.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -15,9 +16,9 @@ public class NoteDBHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "plusdeltas.db";
     private static final String TABLE_NOTES = "notes";
-    private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_TEXT = "_text";
-    private static final String COLUMN_ISPLUS = "_isPlus";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_TEXT = "text";
+    private static final String COLUMN_ISPLUS = "isPlus";
 
     public NoteDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -53,6 +54,22 @@ public class NoteDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_NOTES +
                 " Where " + COLUMN_TEXT + " =\" " + noteText + "\";");
+        db.close();
+    }
+
+    public String noteDBToString() {
+        String dbString = "";
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "Select * from " + TABLE_NOTES;
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            if (cursor.getString(cursor.getColumnIndex("text")) != null) {
+                dbString += cursor.getString(cursor.getColumnIndex("text"));
+            }
+        }
+        db.close();
+        return dbString;
     }
 
 }
