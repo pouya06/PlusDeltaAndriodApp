@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.pouyakarimi.testappone.objects.Note;
 
+import java.util.ArrayList;
+
 /**
  * Created by pouyakarimi on 10/11/15.
  */
@@ -26,9 +28,9 @@ public class NoteDBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_NOTES + "(" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " +
-                COLUMN_TEXT + " TEXT " +
+        String query = "CREATE TABLE " + TABLE_NOTES + " ( " +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_TEXT + " TEXT, " +
                 COLUMN_ISPLUS + " INTEGER " +
                 ");";
         db.execSQL(query);
@@ -57,17 +59,21 @@ public class NoteDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public String noteDBToString() {
-        String dbString = "";
+    public ArrayList<Note> notesArray() {
+        ArrayList<Note> dbString = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "Select * from " + TABLE_NOTES;
+        String query = "Select * from " + TABLE_NOTES + "Where 1;";
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             if (cursor.getString(cursor.getColumnIndex("text")) != null) {
-                dbString += cursor.getString(cursor.getColumnIndex("text"));
+                Note note = new Note();
+                note.setText(cursor.getString(cursor.getColumnIndex("text")));
+                note.setIsItPlus(cursor.getColumnIndex("isPlus") == 1 ? true : false);
+                dbString.add(note);
             }
         }
+        cursor.close();
         db.close();
         return dbString;
     }
