@@ -59,23 +59,25 @@ public class NoteDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Note> notesArray() {
-        ArrayList<Note> dbString = new ArrayList<>();
+    public ArrayList<Note> notesArray(int isPlus) {
+        ArrayList<Note> arrayNote = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "Select * from " + TABLE_NOTES + "Where 1;";
+        String query = "Select * from " + TABLE_NOTES + " where " + COLUMN_ISPLUS + "=\"" + isPlus + "\";";
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             if (cursor.getString(cursor.getColumnIndex("text")) != null) {
                 Note note = new Note();
+                note.setId(Integer.valueOf(cursor.getString(cursor.getColumnIndex("id"))));
                 note.setText(cursor.getString(cursor.getColumnIndex("text")));
-                note.setIsItPlus(cursor.getColumnIndex("isPlus") == 1 ? true : false);
-                dbString.add(note);
+                note.setIsItPlus(isPlus == 1 ? true : false);
+                arrayNote.add(note);
             }
+            cursor.moveToNext();
         }
         cursor.close();
         db.close();
-        return dbString;
+        return arrayNote;
     }
 
 }

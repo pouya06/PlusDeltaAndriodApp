@@ -24,6 +24,11 @@
             android:name=".ViewAll"
             android:label="@string/title_activity_view_all" >
         </activity>
+        <activity
+            android:name=".DeltaActivity"
+            android:label="@string/title_activity_delta"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

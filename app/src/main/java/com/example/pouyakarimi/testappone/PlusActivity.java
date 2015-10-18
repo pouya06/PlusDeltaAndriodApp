@@ -1,35 +1,27 @@
 package com.example.pouyakarimi.testappone;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.Toast;
 
+import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
 import com.example.pouyakarimi.testappone.database.NoteDBHandler;
 import com.example.pouyakarimi.testappone.objects.Note;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.List;
 
 public class PlusActivity extends AppCompatActivity {
 
@@ -48,23 +40,45 @@ public class PlusActivity extends AppCompatActivity {
     private static final String CANCELED_MESSAGE = "Canceled!";
 
     private EditText userInput;
+    private List<Note> notes = new ArrayList<>();
+    private NoteArrayAdapter noteArrayAdapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plus);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.plusButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
 //        next = (Button) findViewById(R.id.newPlus);
 //        save = (Button) findViewById(R.id.saveRow);
 //        tableLayout = (TableLayout) findViewById(R.id.tableLayout1);
 //        tableLayout.setColumnStretchable(0, true);
         note = new Note();
         noteDBHandler = new NoteDBHandler(this, null, null, 1);
-        ArrayList<String> list = new ArrayList<>(); //must remove
-        ListAdapter listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        //rrayList<String> list = new ArrayList<>(); //must remove
+        //ListAdapter listAdapter = new ArrayAdapter<Note>(this, android.R.layout.simple_list_item_1, noteDBHandler.notesArray());
+        noteArrayAdapter = new NoteArrayAdapter(this,0,notes);
         ListView plusListView = (ListView) findViewById(R.id.plusListView);
-        plusListView.setAdapter(listAdapter);
-//        values = new ContentValues();
+        plusListView.setAdapter(noteArrayAdapter);
+
+    }
+
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        refreshNoteList();
     }
 
     @Override
@@ -120,6 +134,30 @@ public class PlusActivity extends AppCompatActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
 
         alertDialog.show();
+    }
+
+
+
+    private void refreshNoteList()
+    {
+        AsyncTask<Void,Void,List<Note>> asyncTask = new AsyncTask<Void, Void, List<Note>>() {
+            @Override
+            protected List<Note> doInBackground(Void... params) {
+                return noteDBHandler.notesArray(1);
+            }
+
+
+            @Override
+            protected void onPostExecute(List<Note> notesList)
+            {
+                notes.clear();
+                notes.addAll(notesList);
+                noteArrayAdapter.notifyDataSetChanged();
+            }
+        };
+        asyncTask.execute();
+
+
     }
 
 
