@@ -37,6 +37,7 @@ public class DeltaActivity extends AppCompatActivity {
     private static final String SAVED_MESSAGE = "Saved!";
     private static final String EDITED_MESSAGE = "Edited!";
     private static final String CANCELED_MESSAGE = "Canceled!";
+    private static final String DELETED_MESSAGE = "The Entry Is Deleted!";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +48,12 @@ public class DeltaActivity extends AppCompatActivity {
 
         note = new Note();
         noteDBHandler = new NoteDBHandler(this, null, null, 1);
+
         noteArrayAdapter = new NoteArrayAdapter(this,0,notes);
+
         plusListView = (ListView) findViewById(R.id.deltaListView);
         plusListView.setAdapter(noteArrayAdapter);
-        openListViewActionDialog();
+        plusListView.setOnItemClickListener(listViewListener);
     }
 
     @Override
@@ -63,20 +66,18 @@ public class DeltaActivity extends AppCompatActivity {
         openDialogHelper(view, "DELTA ", "#FFDB4900", "Add", "Cancel", true);
     }
 
-    private void openListViewActionDialog() {
-        plusListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Note noteForAction = (Note) parent.getItemAtPosition(position);
+            TextView tv = (TextView) view.findViewById(R.id.noteText);
+            String messege = String.valueOf(tv.getText() + "Id:\t" + note.getId());
+            toast.makeText(DeltaActivity.this, messege, Toast.LENGTH_LONG).show();
+            openDialogActionDelta(noteForAction);
+        }
+    };
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TextView tv = (TextView) view.findViewById(R.id.noteText);
-                String messege = String.valueOf(tv.getId()) + "\t" + tv.getText();
-                toast.makeText(DeltaActivity.this, messege, Toast.LENGTH_LONG).show();
-                openDialogActionDelta(view);
-            }
-        });
-    }
-
-    private void openDialogActionDelta(View view) {
+    private void openDialogActionDelta(final Note noteForAction) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Changing Item ...");
         alertDialogBuilder.setMessage("Do You Wanna Change This Entry?");
@@ -86,6 +87,7 @@ public class DeltaActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
+                                onDeleteADialog(noteForAction);
                                 toast.makeText(DeltaActivity.this, SAVED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         })
@@ -108,6 +110,32 @@ public class DeltaActivity extends AppCompatActivity {
                         });
         alertDialogBuilder.show();
 
+    }
+
+    private void onDeleteADialog(final Note noteForAction) {
+        AlertDialog.Builder deleteAlertDialogBuilder = new AlertDialog.Builder(this);
+        deleteAlertDialogBuilder.setTitle("Deleting Item ...");
+        deleteAlertDialogBuilder.setMessage("Are you sure ???");
+        deleteAlertDialogBuilder.setIcon(android.R.drawable.ic_menu_delete);
+        deleteAlertDialogBuilder.setCancelable(true)
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                noteDBHandler.deleteRow(noteForAction);
+                                refreshNoteList();
+                                toast.makeText(DeltaActivity.this, DELETED_MESSAGE, Toast.LENGTH_LONG).show();
+                            }
+                        })
+                .setNeutralButton("No",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                toast.makeText(DeltaActivity.this, CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                            }
+                        });
+        deleteAlertDialogBuilder.show();
     }
 
     private void openDialogHelper(View view, String title, String color, String buttonPositive, String buttonNegative, final boolean isSave){
@@ -185,6 +213,13 @@ public class DeltaActivity extends AppCompatActivity {
         };
         asyncTask.execute();
 
+    }
+
+    public void goUp(View view){
+
+    }
+
+    public void goDown(View view){
 
     }
 }

@@ -52,10 +52,10 @@ public class NoteDBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void deleteRow(String noteText) {
+    public void deleteRow(Note note) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_NOTES +
-                " Where " + COLUMN_TEXT + " =\" " + noteText + "\";");
+                " Where " + COLUMN_ID + " =\" " + note.getId() + "\";");
         db.close();
     }
 
