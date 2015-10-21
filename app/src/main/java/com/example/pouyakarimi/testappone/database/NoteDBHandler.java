@@ -52,6 +52,15 @@ public class NoteDBHandler extends SQLiteOpenHelper {
 
     }
 
+    public void updateRow(Note note){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE " + TABLE_NOTES +
+                " SET " + COLUMN_TEXT + " =\"" + note.getText() + "\" , " +
+                        COLUMN_ISPLUS + " = " + (note.isItPlus() ? 1 : 0) +
+                        " WHERE " + COLUMN_ID + " =\"" + note.getId() + "\";");
+        db.close();
+    }
+
     public void deleteRow(Note note) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_NOTES +

@@ -63,7 +63,7 @@ public class DeltaActivity extends AppCompatActivity {
     }
 
     public void openDialogDelta(View view) {
-        openDialogHelper(view, "DELTA ", "#FFDB4900", "Add", "Cancel", true);
+        openDialogHelper(view, "DELTA ", "#FFDB4900", "Add", "Cancel", true, null);
     }
 
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
@@ -105,7 +105,7 @@ public class DeltaActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 LayoutInflater factory = getLayoutInflater();
                                 View view = factory.inflate(R.layout.prompts, null);
-                                openDialogHelper(view, "Editing ... ", "#4D7AF4", "Edit", "Cancel", false);
+                                openDialogHelper(view, "Editing ... ", "#4D7AF4", "Edit", "Cancel", false, noteForAction);
                             }
                         });
         alertDialogBuilder.show();
@@ -138,7 +138,7 @@ public class DeltaActivity extends AppCompatActivity {
         deleteAlertDialogBuilder.show();
     }
 
-    private void openDialogHelper(View view, String title, String color, String buttonPositive, String buttonNegative, final boolean isSave){
+    private void openDialogHelper(View view, String title, String color, String buttonPositive, String buttonNegative, final boolean isSave, final Note noteForAction){
         LayoutInflater li = LayoutInflater.from(this);
         final View promptsView = li.inflate(R.layout.prompts, null);
 
@@ -152,9 +152,7 @@ public class DeltaActivity extends AppCompatActivity {
 
         userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
         if(!isSave){
-            TextView savedText = (TextView) view.findViewById(R.id.noteText);
-            //toast.makeText(DeltaActivity.this, savedText.getText(), Toast.LENGTH_LONG).show();
-            //userInput.setText(savedText.getText().toString());
+            userInput.setText(noteForAction.getText());
         }
 
         alertDialogBuilder
@@ -166,7 +164,7 @@ public class DeltaActivity extends AppCompatActivity {
                                 if (isSave)
                                     save();
                                 else
-                                    edit();
+                                    edit(noteForAction);
                             }
                         })
                 .setNeutralButton(buttonNegative,
@@ -190,7 +188,11 @@ public class DeltaActivity extends AppCompatActivity {
         toast.makeText(DeltaActivity.this, SAVED_MESSAGE, Toast.LENGTH_LONG).show();
     }
 
-    private void edit() {
+    private void edit(Note noteForAction) {
+        noteForAction.setText(userInput.getText().toString());
+        noteForAction.setIsItPlus(false);
+        noteDBHandler.updateRow(noteForAction);
+        refreshNoteList();
         toast.makeText(DeltaActivity.this, EDITED_MESSAGE, Toast.LENGTH_LONG).show();
     }
 
