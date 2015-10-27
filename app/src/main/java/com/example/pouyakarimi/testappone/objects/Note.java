@@ -41,4 +41,19 @@ public class Note {
         this._isPlus = isItPlus;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Note note = (Note) o;
+
+        return _id == note._id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return _id;
+    }
 }

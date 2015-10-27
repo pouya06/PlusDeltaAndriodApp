@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
@@ -68,8 +67,8 @@ public class PlusActivity extends AppCompatActivity {
         //rrayList<String> list = new ArrayList<>(); //must remove
         //ListAdapter listAdapter = new ArrayAdapter<Note>(this, android.R.layout.simple_list_item_1, noteDBHandler.notesArray());
         noteArrayAdapter = new NoteArrayAdapter(this,0,notes);
-        ListView plusListView = (ListView) findViewById(R.id.plusListView);
-        plusListView.setAdapter(noteArrayAdapter);
+        //ListView plusListView = (ListView) findViewById(R.id.plusListView);
+       // plusListView.setAdapter(noteArrayAdapter);
 
     }
 
@@ -121,14 +120,14 @@ public class PlusActivity extends AppCompatActivity {
                                 note.setText(userInput.getText().toString());
                                 note.setIsItPlus(true);
                                 noteDBHandler.addNewRow(note);
-                                toast.makeText(PlusActivity.this, SAVED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(PlusActivity.this, SAVED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         })
                 .setNegativeButton("Cancel",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
-                                toast.makeText(PlusActivity.this, CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(PlusActivity.this, CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();

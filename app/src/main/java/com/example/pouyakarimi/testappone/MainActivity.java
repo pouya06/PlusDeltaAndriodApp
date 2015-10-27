@@ -1,15 +1,11 @@
 package com.example.pouyakarimi.testappone;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.example.pouyakarimi.testappone.objects.Note;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,18 +39,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void openNewPage(View v) {
-        Intent intent = new Intent(getApplicationContext(), PlusActivity.class);
-        startActivity(intent);
-    }
-
-    public void viewAll(View v) {
-        Intent intent = new Intent(getApplicationContext(), ViewAll.class);
+    public void openPlusPage(View v) {
+        Intent intent = new Intent(getApplicationContext(), Plus.class);
         startActivity(intent);
     }
 
     public void openDeltaPage(View view) {
         Intent intent = new Intent(getApplicationContext(), DeltaActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewAll(View v) {
+        Intent intent = new Intent(getApplicationContext(), Plus.class);
         startActivity(intent);
     }
 }

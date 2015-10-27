@@ -56,14 +56,14 @@
         <!--android:layout_alignParentRight="true"-->
         <!--android:layout_alignParentEnd="true" />-->
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/plusListView"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/plusButton"
-        android:layout_alignRight="@+id/plusButton"
-        android:layout_alignEnd="@+id/plusButton" />
+    <!--<ListView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/plusListView"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_above="@+id/plusButton"-->
+        <!--android:layout_alignRight="@+id/plusButton"-->
+        <!--android:layout_alignEnd="@+id/plusButton" />-->
 </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton android:id="@+id/plusButton"
