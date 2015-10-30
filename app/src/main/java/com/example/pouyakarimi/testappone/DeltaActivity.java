@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
-import com.example.pouyakarimi.testappone.database.NoteDBHandler;
+import com.example.pouyakarimi.testappone.database.DBHandler;
 import com.example.pouyakarimi.testappone.objects.Note;
 import com.example.pouyakarimi.testappone.statics.StaticMessages;
 
@@ -27,12 +27,22 @@ public class DeltaActivity extends AppCompatActivity {
 
     private EditText userInput;
     private Note note;
-    private NoteDBHandler noteDBHandler;
+    private DBHandler DBHandler;
     private Toast toast;
     private List<Note> notes = new ArrayList<>();
     private NoteArrayAdapter noteArrayAdapter;
     private TextView userInputTitle;
     private ListView deltaListView;
+    private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Note noteForAction = (Note) parent.getItemAtPosition(position);
+            TextView tv = (TextView) view.findViewById(R.id.noteText);
+            String messege = String.valueOf(tv.getText() + "Id:\t" + note.getId());
+            Toast.makeText(DeltaActivity.this, messege, Toast.LENGTH_LONG).show();
+            openDialogActionDelta(noteForAction);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +52,7 @@ public class DeltaActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         note = new Note();
-        noteDBHandler = new NoteDBHandler(this, null, null, 1);
+        DBHandler = new DBHandler(this, null, null, 1);
 
         noteArrayAdapter = new NoteArrayAdapter(this,0,notes);
 
@@ -60,17 +70,6 @@ public class DeltaActivity extends AppCompatActivity {
     public void openDialogDelta(View view) {
         openDialogHelper(view, "DELTA ", "#FFDB4900", "Add", "Cancel", true, null);
     }
-
-    private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Note noteForAction = (Note) parent.getItemAtPosition(position);
-            TextView tv = (TextView) view.findViewById(R.id.noteText);
-            String messege = String.valueOf(tv.getText() + "Id:\t" + note.getId());
-            Toast.makeText(DeltaActivity.this, messege, Toast.LENGTH_LONG).show();
-            openDialogActionDelta(noteForAction);
-        }
-    };
 
     private void openDialogActionDelta(final Note noteForAction) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -117,7 +116,7 @@ public class DeltaActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                noteDBHandler.deleteRow(noteForAction);
+                                DBHandler.deleteNoteRow(noteForAction);
                                 refreshNoteList();
                                 Toast.makeText(DeltaActivity.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
@@ -178,7 +177,7 @@ public class DeltaActivity extends AppCompatActivity {
     private void save() {
         note.setText(userInput.getText().toString());
         note.setIsItPlus(false);
-        noteDBHandler.addNewRow(note);
+        DBHandler.addNewNoteRow(note);
         refreshNoteList();
         Toast.makeText(DeltaActivity.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
     }
@@ -186,7 +185,7 @@ public class DeltaActivity extends AppCompatActivity {
     private void edit(Note noteForAction) {
         noteForAction.setText(userInput.getText().toString());
         noteForAction.setIsItPlus(false);
-        noteDBHandler.updateRow(noteForAction);
+        DBHandler.updateNoteRow(noteForAction);
         refreshNoteList();
         Toast.makeText(DeltaActivity.this, StaticMessages.EDITED_MESSAGE, Toast.LENGTH_LONG).show();
     }
@@ -196,7 +195,7 @@ public class DeltaActivity extends AppCompatActivity {
         AsyncTask<Void,Void,List<Note>> asyncTask = new AsyncTask<Void, Void, List<Note>>() {
             @Override
             protected List<Note> doInBackground(Void... params) {
-                return noteDBHandler.notesArray(0);
+                return DBHandler.notesArray(0);
             }
 
 

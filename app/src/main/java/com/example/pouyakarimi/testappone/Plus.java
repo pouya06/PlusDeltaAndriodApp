@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
-import com.example.pouyakarimi.testappone.database.NoteDBHandler;
+import com.example.pouyakarimi.testappone.database.DBHandler;
 import com.example.pouyakarimi.testappone.objects.Note;
 import com.example.pouyakarimi.testappone.statics.StaticMessages;
 
@@ -35,13 +35,19 @@ public class Plus extends AppCompatActivity
 
     private EditText userInput;
     private Note note;
-    private NoteDBHandler noteDBHandler;
+    private DBHandler DBHandler;
     private Toast toast;
     private List<Note> notes = new ArrayList<>();
     private NoteArrayAdapter noteArrayAdapter;
     private TextView userInputTitle;
     private ListView plusListView;
-
+    private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Note noteForAction = (Note) parent.getItemAtPosition(position);
+            openDialogActionDelta(noteForAction);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +58,18 @@ public class Plus extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // Do whatever you want here
+                TextView tv = (TextView) drawerView.findViewById(R.id.nav_primary_email);
+                if (tv != null)
+                    tv.setText("foobar");
+            }
+        };
+
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -60,7 +77,7 @@ public class Plus extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         note = new Note();
-        noteDBHandler = new NoteDBHandler(this, null, null, 1);
+        DBHandler = new DBHandler(this, null, null, 1);
 
         noteArrayAdapter = new NoteArrayAdapter(this,0,notes);
 
@@ -68,14 +85,6 @@ public class Plus extends AppCompatActivity
         plusListView.setAdapter(noteArrayAdapter);
         plusListView.setOnItemClickListener(listViewListener);
     }
-
-    private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Note noteForAction = (Note) parent.getItemAtPosition(position);
-            openDialogActionDelta(noteForAction);
-        }
-    };
 
     @Override
     public void onBackPressed() {
@@ -109,14 +118,16 @@ public class Plus extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_showAll) {
-            // Handle the camera action
+        if (id == R.id.nav_users) {
+            Intent intent = new Intent(getApplicationContext(), Users.class);
+            startActivity(intent);
         } else if (id == R.id.nav_plus) {
 
         } else if (id == R.id.nav_delta) {
@@ -191,7 +202,7 @@ public class Plus extends AppCompatActivity
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                noteDBHandler.deleteRow(noteForAction);
+                                DBHandler.deleteNoteRow(noteForAction);
                                 refreshNoteList();
                                 Toast.makeText(Plus.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
@@ -252,7 +263,7 @@ public class Plus extends AppCompatActivity
     private void save() {
         note.setText(userInput.getText().toString());
         note.setIsItPlus(true);
-        noteDBHandler.addNewRow(note);
+        DBHandler.addNewNoteRow(note);
         refreshNoteList();
         Toast.makeText(Plus.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
     }
@@ -260,7 +271,7 @@ public class Plus extends AppCompatActivity
     private void edit(Note noteForAction) {
         noteForAction.setText(userInput.getText().toString());
         noteForAction.setIsItPlus(true);
-        noteDBHandler.updateRow(noteForAction);
+        DBHandler.updateNoteRow(noteForAction);
         refreshNoteList();
         Toast.makeText(Plus.this, StaticMessages.EDITED_MESSAGE, Toast.LENGTH_LONG).show();
     }
@@ -269,7 +280,7 @@ public class Plus extends AppCompatActivity
         AsyncTask<Void,Void,List<Note>> asyncTask = new AsyncTask<Void, Void, List<Note>>() {
             @Override
             protected List<Note> doInBackground(Void... params) {
-                return noteDBHandler.notesArray(1);
+                return DBHandler.notesArray(1);
             }
 
 
@@ -284,4 +295,5 @@ public class Plus extends AppCompatActivity
         asyncTask.execute();
 
     }
+
 }

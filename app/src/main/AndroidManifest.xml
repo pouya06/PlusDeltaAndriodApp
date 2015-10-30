@@ -17,10 +17,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PlusActivity"
-            android:label="@string/title_activity_plus" >
-        </activity>
-        <activity
             android:name=".ViewAll"
             android:label="@string/title_activity_view_all" >
         </activity>
@@ -32,6 +28,10 @@
         <activity
             android:name=".Plus"
             android:label="@string/title_activity_plus"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Users"
+            android:label="@string/title_activity_users"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
