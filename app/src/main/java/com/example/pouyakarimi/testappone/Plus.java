@@ -26,6 +26,7 @@ import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
 import com.example.pouyakarimi.testappone.database.DBHandler;
 import com.example.pouyakarimi.testappone.objects.Note;
 import com.example.pouyakarimi.testappone.statics.StaticMessages;
+import com.example.pouyakarimi.testappone.utils.EmailUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class Plus extends AppCompatActivity
     private NoteArrayAdapter noteArrayAdapter;
     private TextView userInputTitle;
     private ListView plusListView;
+    private String[] bodyOfEmail;
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -129,7 +131,7 @@ public class Plus extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0)));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -26,7 +26,7 @@ import com.example.pouyakarimi.testappone.adapters.UserArrayAdaptor;
 import com.example.pouyakarimi.testappone.database.DBHandler;
 import com.example.pouyakarimi.testappone.objects.User;
 import com.example.pouyakarimi.testappone.statics.StaticMessages;
-import com.example.pouyakarimi.testappone.utils.ValidationUtil;
+import com.example.pouyakarimi.testappone.utils.EmailUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +43,7 @@ public class Users extends AppCompatActivity
     private User user;
     private List<User> users = new ArrayList<>();
     private ListView userListView;
+    private String[] bodyPlus;
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -155,7 +156,7 @@ public class Users extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            startActivity(EmailUtil.sendEmail(userDBHandler.notesArray(1), userDBHandler.notesArray(0)));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -196,7 +197,7 @@ public class Users extends AppCompatActivity
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                if (ValidationUtil.isEmailValid(userEmailInput.getText().toString())) {
+                                if (EmailUtil.isEmailValid(userEmailInput.getText().toString())) {
                                     user.setName(userNameInput.getText().toString());
                                     user.setEmail(userEmailInput.getText().toString());
                                     user.setisItPrimary(primarySwitch.isChecked());
