@@ -30,8 +30,6 @@ public class EmailUtil {
 
     public static Intent sendEmail(ArrayList<Note> bodyPlus, ArrayList<Note> bodyyDelta) {
         Intent intent = new Intent();
-
-
         intent.setData(Uri.parse("mailto:"));
         String[] to = {"pouya06@gmail.com"};
         intent.putExtra(Intent.EXTRA_EMAIL, to);
