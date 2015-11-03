@@ -147,22 +147,33 @@ public class DBHandler extends SQLiteOpenHelper {
         User user = new User();
 
         SQLiteDatabase db = getWritableDatabase();
-        String query = "Select count* from " + TABLE_USER + " where " + USER_COLUMN_ISPRIMARY + "=1;";
+        String query = "Select * from " + TABLE_USER + " where " + USER_COLUMN_ISPRIMARY + "=1;";
         Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToFirst();
 
         user.setName(cursor.getString(cursor.getColumnIndex("name")));
         user.setEmail(cursor.getString(cursor.getColumnIndex("email")));
-        user.setisItPrimary(cursor.getColumnIndex("isPrimary") == 1 ? true : false);
+        user.setisItPrimary(Integer.valueOf(cursor.getColumnIndex("isPrimary")) == 1 ? true : false);
 
         cursor.close();
         db.close();
         return user;
     }
 
+    public Boolean IsThereAPrimaryUser() {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "Select * from " + TABLE_USER + " where " + USER_COLUMN_ISPRIMARY + "='1';";
+        Cursor cursor = db.rawQuery(query, null);
+
+        return cursor.getCount() != 0;
+
+    }
+
     public ArrayList<User> listOfUsers() {
         ArrayList<User> userList = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "Select * from " + TABLE_USER;
+        String query = "Select * from " + TABLE_USER + " Order By " + USER_COLUMN_ISPRIMARY + " DESC ";
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

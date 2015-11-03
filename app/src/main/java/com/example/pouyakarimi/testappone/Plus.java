@@ -58,17 +58,7 @@ public class Plus extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                // Do whatever you want here
-                TextView tv = (TextView) drawerView.findViewById(R.id.nav_primary_email);
-                if (tv != null)
-                    tv.setText("foobar");
-            }
-        };
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawer.setDrawerListener(toggle);
         toggle.syncState();

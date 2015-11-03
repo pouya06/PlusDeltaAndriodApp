@@ -26,6 +26,7 @@ import com.example.pouyakarimi.testappone.adapters.UserArrayAdaptor;
 import com.example.pouyakarimi.testappone.database.DBHandler;
 import com.example.pouyakarimi.testappone.objects.User;
 import com.example.pouyakarimi.testappone.statics.StaticMessages;
+import com.example.pouyakarimi.testappone.utils.ValidationUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,18 +184,28 @@ public class Users extends AppCompatActivity
         userEmailInput = (EditText) promptsView.findViewById(R.id.editTextEmailDialogUserInput);
         primarySwitch = (Switch) promptsView.findViewById(R.id.primarySwitch);
 
+        if (userDBHandler.IsThereAPrimaryUser()) {
+            primarySwitch.setEnabled(false);
+        } else {
+            primarySwitch.setEnabled(true);
+        }
+
         alertDialogBuilder
                 .setCancelable(false)
                 .setPositiveButton("Add",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                user.setName(userNameInput.getText().toString());
-                                user.setEmail(userEmailInput.getText().toString());
-                                user.setisItPrimary(primarySwitch.isChecked());
-                                userDBHandler.addNewUserRow(user);
-                                refreshUserList();
-                                Toast.makeText(Users.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
+                                if (ValidationUtil.isEmailValid(userEmailInput.getText().toString())) {
+                                    user.setName(userNameInput.getText().toString());
+                                    user.setEmail(userEmailInput.getText().toString());
+                                    user.setisItPrimary(primarySwitch.isChecked());
+                                    userDBHandler.addNewUserRow(user);
+                                    refreshUserList();
+                                    Toast.makeText(Users.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(Users.this, StaticMessages.VALID_EMAIL_MESSAGE, Toast.LENGTH_LONG).show();
+                                }
                             }
                         })
                 .setNeutralButton("Cancel",
