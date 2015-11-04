@@ -149,14 +149,14 @@ public class Users extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), Plus.class);
             startActivity(intent);
         } else if (id == R.id.nav_delta) {
-            Intent intent = new Intent(getApplicationContext(), DeltaActivity.class);
+            Intent intent = new Intent(getApplicationContext(), Delta.class);
             startActivity(intent);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-            startActivity(EmailUtil.sendEmail(userDBHandler.notesArray(1), userDBHandler.notesArray(0)));
+            startActivity(EmailUtil.sendEmail(userDBHandler.notesArray(1), userDBHandler.notesArray(0), userDBHandler.listOfUsers()));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

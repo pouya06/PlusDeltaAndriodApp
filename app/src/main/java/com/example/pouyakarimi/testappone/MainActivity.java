@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openDeltaPage(View view) {
-        Intent intent = new Intent(getApplicationContext(), DeltaActivity.class);
+        Intent intent = new Intent(getApplicationContext(), Delta.class);
         startActivity(intent);
     }
 

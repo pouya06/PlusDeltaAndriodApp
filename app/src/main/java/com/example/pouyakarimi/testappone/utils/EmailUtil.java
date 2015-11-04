@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.example.pouyakarimi.testappone.objects.Note;
+import com.example.pouyakarimi.testappone.objects.User;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -28,15 +29,29 @@ public class EmailUtil {
         return isValid;
     }
 
-    public static Intent sendEmail(ArrayList<Note> bodyPlus, ArrayList<Note> bodyyDelta) {
+    public static Intent sendEmail(ArrayList<Note> bodyPlus, ArrayList<Note> bodyyDelta, ArrayList<User> users) {
         Intent intent = new Intent();
         intent.setData(Uri.parse("mailto:"));
-        String[] to = {"pouya06@gmail.com"};
+        String[] to = listofUsers(users);
         intent.putExtra(Intent.EXTRA_EMAIL, to);
         intent.putExtra(Intent.EXTRA_SUBJECT, "Plus & Delta");
         intent.putExtra(Intent.EXTRA_TEXT, concatBody(bodyPlus, bodyyDelta));
         intent.setType("message/rfc822");
         return Intent.createChooser(intent, "Send Email");
+    }
+
+    private static String[] listofUsers(ArrayList<User> users) {
+        ArrayList<String> resultList = new ArrayList<>();
+        if (!users.isEmpty()) {
+            for (User user : users) {
+                resultList.add(user.getEmail());
+            }
+        }
+
+        String[] resultArr = new String[resultList.size()];
+        resultArr = resultList.toArray(resultArr);
+
+        return resultArr;
     }
 
     public static String concatBody(ArrayList<Note> bodyPlus, ArrayList<Note> bodyyDelta) {
@@ -48,7 +63,7 @@ public class EmailUtil {
             }
         }
         if (!bodyyDelta.isEmpty()) {
-            result += "\n\n\n\n";
+            result += "\n\n\n";
             result += "∆Deltas∆\n\n";
             for (Note delta : bodyyDelta) {
                 result += "∆  " + delta.getText() + ".\n";

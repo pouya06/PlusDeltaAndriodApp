@@ -2,12 +2,19 @@ package com.example.pouyakarimi.testappone;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -19,15 +26,18 @@ import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
 import com.example.pouyakarimi.testappone.database.DBHandler;
 import com.example.pouyakarimi.testappone.objects.Note;
 import com.example.pouyakarimi.testappone.statics.StaticMessages;
+import com.example.pouyakarimi.testappone.utils.EmailUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeltaActivity extends AppCompatActivity {
+public class Delta extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+
 
     private EditText userInput;
     private Note note;
-    private DBHandler DBHandler;
+    private com.example.pouyakarimi.testappone.database.DBHandler DBHandler;
     private Toast toast;
     private List<Note> notes = new ArrayList<>();
     private NoteArrayAdapter noteArrayAdapter;
@@ -39,26 +49,96 @@ public class DeltaActivity extends AppCompatActivity {
             Note noteForAction = (Note) parent.getItemAtPosition(position);
             TextView tv = (TextView) view.findViewById(R.id.noteText);
             String messege = String.valueOf(tv.getText() + "Id:\t" + note.getId());
-            Toast.makeText(DeltaActivity.this, messege, Toast.LENGTH_LONG).show();
+            Toast.makeText(Delta.this, messege, Toast.LENGTH_LONG).show();
             openDialogActionDelta(noteForAction);
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_delta);
+        setContentView(R.layout.activity_delta2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         note = new Note();
         DBHandler = new DBHandler(this, null, null, 1);
 
-        noteArrayAdapter = new NoteArrayAdapter(this,0,notes);
+        noteArrayAdapter = new NoteArrayAdapter(this, 0, notes);
 
         deltaListView = (ListView) findViewById(R.id.deltaListView);
         deltaListView.setAdapter(noteArrayAdapter);
         deltaListView.setOnItemClickListener(listViewListener);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.delta, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_users) {
+            Intent intent = new Intent(getApplicationContext(), Users.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_plus) {
+            Intent intent = new Intent(getApplicationContext(), Plus.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_delta) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+            startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
@@ -82,7 +162,7 @@ public class DeltaActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 onDeleteADialog(noteForAction);
-                                Toast.makeText(DeltaActivity.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Delta.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         })
                 .setNeutralButton("Cancel",
@@ -90,7 +170,7 @@ public class DeltaActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                Toast.makeText(DeltaActivity.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Delta.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         })
                 .setNegativeButton("Edit",
@@ -118,7 +198,7 @@ public class DeltaActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 DBHandler.deleteNoteRow(noteForAction);
                                 refreshNoteList();
-                                Toast.makeText(DeltaActivity.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Delta.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         })
                 .setNeutralButton("No",
@@ -126,13 +206,13 @@ public class DeltaActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                Toast.makeText(DeltaActivity.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Delta.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         });
         deleteAlertDialogBuilder.show();
     }
 
-    private void openDialogHelper(View view, String title, String color, String buttonPositive, String buttonNegative, final boolean isSave, final Note noteForAction){
+    private void openDialogHelper(View view, String title, String color, String buttonPositive, String buttonNegative, final boolean isSave, final Note noteForAction) {
         LayoutInflater li = LayoutInflater.from(this);
         final View promptsView = li.inflate(R.layout.prompts, null);
 
@@ -145,7 +225,7 @@ public class DeltaActivity extends AppCompatActivity {
         userInputTitle.setTextColor(Color.parseColor(color));
 
         userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-        if(!isSave){
+        if (!isSave) {
             userInput.setText(noteForAction.getText());
         }
 
@@ -166,7 +246,7 @@ public class DeltaActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
-                                Toast.makeText(DeltaActivity.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Delta.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -179,7 +259,7 @@ public class DeltaActivity extends AppCompatActivity {
         note.setIsItPlus(false);
         DBHandler.addNewNoteRow(note);
         refreshNoteList();
-        Toast.makeText(DeltaActivity.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
+        Toast.makeText(Delta.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
     }
 
     private void edit(Note noteForAction) {
@@ -187,12 +267,12 @@ public class DeltaActivity extends AppCompatActivity {
         noteForAction.setIsItPlus(false);
         DBHandler.updateNoteRow(noteForAction);
         refreshNoteList();
-        Toast.makeText(DeltaActivity.this, StaticMessages.EDITED_MESSAGE, Toast.LENGTH_LONG).show();
+        Toast.makeText(Delta.this, StaticMessages.EDITED_MESSAGE, Toast.LENGTH_LONG).show();
     }
 
 
     private void refreshNoteList() {
-        AsyncTask<Void,Void,List<Note>> asyncTask = new AsyncTask<Void, Void, List<Note>>() {
+        AsyncTask<Void, Void, List<Note>> asyncTask = new AsyncTask<Void, Void, List<Note>>() {
             @Override
             protected List<Note> doInBackground(Void... params) {
                 return DBHandler.notesArray(0);
@@ -200,8 +280,7 @@ public class DeltaActivity extends AppCompatActivity {
 
 
             @Override
-            protected void onPostExecute(List<Note> notesList)
-            {
+            protected void onPostExecute(List<Note> notesList) {
                 notes.clear();
                 notes.addAll(notesList);
                 noteArrayAdapter.notifyDataSetChanged();
@@ -211,11 +290,11 @@ public class DeltaActivity extends AppCompatActivity {
 
     }
 
-    public void goUp(View view){
+    public void goUp(View view) {
 
     }
 
-    public void goDown(View view){
+    public void goDown(View view) {
 
     }
 }

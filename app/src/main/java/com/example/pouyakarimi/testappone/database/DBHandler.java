@@ -92,7 +92,7 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE " + TABLE_NOTES +
                 " SET " + NOTE_COLUMN_TEXT + " =\"" + note.getText() + "\" , " +
-                NOTE_COLUMN_ISPLUS + " = " + (note.isItPlus() ? 1 : 0) +
+                NOTE_COLUMN_ISPLUS + " =\"" + (note.isItPlus() ? 1 : 0) + "\" , " +
                 NOTE_COLUMN_UPDATEDAT + " =\"" + DateUtil.currentDate() + "\" " +
                 " WHERE " + NOTE_COLUMN_ID + " =\"" + note.getId() + "\";");
         db.close();

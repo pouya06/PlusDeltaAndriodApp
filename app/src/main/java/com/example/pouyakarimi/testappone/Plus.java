@@ -123,7 +123,7 @@ public class Plus extends AppCompatActivity
         } else if (id == R.id.nav_plus) {
 
         } else if (id == R.id.nav_delta) {
-            Intent intent = new Intent(getApplicationContext(), DeltaActivity.class);
+            Intent intent = new Intent(getApplicationContext(), Delta.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_manage) {
@@ -131,7 +131,7 @@ public class Plus extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-            startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0)));
+            startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

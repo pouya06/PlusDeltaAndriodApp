@@ -21,17 +21,16 @@
             android:label="@string/title_activity_view_all" >
         </activity>
         <activity
-            android:name=".DeltaActivity"
-            android:label="@string/title_activity_delta"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
-        <activity
             android:name=".Plus"
             android:label="@string/title_activity_plus"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Users"
             android:label="@string/title_activity_users"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Delta"
+            android:label="@string/title_activity_delta"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
