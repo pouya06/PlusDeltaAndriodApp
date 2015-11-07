@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
 import com.example.pouyakarimi.testappone.database.DBHandler;
 import com.example.pouyakarimi.testappone.objects.Note;
+import com.example.pouyakarimi.testappone.objects.User;
 import com.example.pouyakarimi.testappone.statics.StaticMessages;
 import com.example.pouyakarimi.testappone.utils.EmailUtil;
 
@@ -42,6 +43,8 @@ public class Plus extends AppCompatActivity
     private NoteArrayAdapter noteArrayAdapter;
     private TextView userInputTitle;
     private ListView plusListView;
+    private TextView primaryEmail;
+    private TextView primaryUser;
     private String[] bodyOfEmail;
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -68,10 +71,18 @@ public class Plus extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View header = View.inflate(this, R.layout.drawer_header, null);
+        navigationView.addHeaderView(header);
+
         note = new Note();
         DBHandler = new DBHandler(this, null, null, 1);
 
         noteArrayAdapter = new NoteArrayAdapter(this,0,notes);
+
+        primaryEmail = (TextView) header.findViewById(R.id.nav_primary_email);
+        primaryUser = (TextView) header.findViewById(R.id.nav_primary_user);
+
+        getPrimaryUserFromDb();
 
         plusListView = (ListView) findViewById(R.id.plusListView);
         plusListView.setAdapter(noteArrayAdapter);
@@ -286,6 +297,30 @@ public class Plus extends AppCompatActivity
         };
         asyncTask.execute();
 
+    }
+
+    private void getPrimaryUserFromDb() {
+        AsyncTask<Void, Void, User> asyncTask = new AsyncTask<Void, Void, User>() {
+
+            @Override
+            protected User doInBackground(Void... params) {
+                return DBHandler.primaryUser();
+            }
+
+            @Override
+            protected void onPostExecute(User user) {
+                if (user.getEmail() != null) {
+                    primaryEmail.setText(user.getEmail());
+                    primaryUser.setText(user.getName());
+                    primaryEmail.setTextColor(Color.WHITE);
+                } else {
+                    primaryEmail.setText("Please set up your users");
+                    primaryUser.setText("Plus & Delta");
+                    primaryEmail.setTextColor(Color.RED);
+                }
+            }
+        };
+        asyncTask.execute();
     }
 
 }

@@ -3,6 +3,7 @@ package com.example.pouyakarimi.testappone;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -43,6 +44,8 @@ public class Users extends AppCompatActivity
     private User user;
     private List<User> users = new ArrayList<>();
     private ListView userListView;
+    private TextView primaryEmail;
+    private TextView primaryUser;
     private String[] bodyPlus;
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -68,11 +71,19 @@ public class Users extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View header = View.inflate(this, R.layout.drawer_header, null);
+        navigationView.addHeaderView(header);
 
         user = new User();
         userDBHandler = new DBHandler(this, null, null, 1);
 
         userArrayAdaptor = new UserArrayAdaptor(this, 0, users);
+
+        primaryEmail = (TextView) header.findViewById(R.id.nav_primary_email);
+        primaryUser = (TextView) header.findViewById(R.id.nav_primary_user);
+
+        getPrimaryUserFromDb();
+
         userListView = (ListView) findViewById(R.id.userListView);
         userListView.setAdapter(userArrayAdaptor);
         userListView.setOnItemClickListener(listViewListener);
@@ -91,6 +102,7 @@ public class Users extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int id) {
                                 userDBHandler.deleteUserRow(userForAction);
                                 refreshUserList();
+                                getPrimaryUserFromDb();
                                 Toast.makeText(Users.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         })
@@ -168,6 +180,9 @@ public class Users extends AppCompatActivity
     public void onResume() {
         super.onResume();
         refreshUserList();
+        if (primaryEmail != null) {
+            primaryEmail.setText("foobar");
+        }
     }
 
     public void openUserDialog(View view) {
@@ -203,6 +218,7 @@ public class Users extends AppCompatActivity
                                     user.setisItPrimary(primarySwitch.isChecked());
                                     userDBHandler.addNewUserRow(user);
                                     refreshUserList();
+                                    getPrimaryUserFromDb();
                                     Toast.makeText(Users.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
                                 } else {
                                     Toast.makeText(Users.this, StaticMessages.VALID_EMAIL_MESSAGE, Toast.LENGTH_LONG).show();
@@ -240,5 +256,29 @@ public class Users extends AppCompatActivity
         };
         asyncTask.execute();
 
+    }
+
+    private void getPrimaryUserFromDb() {
+        AsyncTask<Void, Void, User> asyncTask = new AsyncTask<Void, Void, User>() {
+
+            @Override
+            protected User doInBackground(Void... params) {
+                return userDBHandler.primaryUser();
+            }
+
+            @Override
+            protected void onPostExecute(User user) {
+                if (user.getEmail() != null) {
+                    primaryEmail.setText(user.getEmail());
+                    primaryUser.setText(user.getName());
+                    primaryEmail.setTextColor(Color.WHITE);
+                } else {
+                    primaryEmail.setText("Please set up your users");
+                    primaryUser.setText("Plus & Delta");
+                    primaryEmail.setTextColor(Color.RED);
+                }
+            }
+        };
+        asyncTask.execute();
     }
 }

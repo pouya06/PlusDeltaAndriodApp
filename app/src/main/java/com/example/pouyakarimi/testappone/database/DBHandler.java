@@ -150,12 +150,11 @@ public class DBHandler extends SQLiteOpenHelper {
         String query = "Select * from " + TABLE_USER + " where " + USER_COLUMN_ISPRIMARY + "=1;";
         Cursor cursor = db.rawQuery(query, null);
 
-        cursor.moveToFirst();
-
-        user.setName(cursor.getString(cursor.getColumnIndex("name")));
-        user.setEmail(cursor.getString(cursor.getColumnIndex("email")));
-        user.setisItPrimary(Integer.valueOf(cursor.getColumnIndex("isPrimary")) == 1 ? true : false);
-
+        if (cursor.moveToFirst()) {
+            user.setName(cursor.getString(cursor.getColumnIndex("name")));
+            user.setEmail(cursor.getString(cursor.getColumnIndex("email")));
+            user.setisItPrimary(Integer.valueOf(cursor.getColumnIndex("isPrimary")) == 1 ? true : false);
+        }
         cursor.close();
         db.close();
         return user;
