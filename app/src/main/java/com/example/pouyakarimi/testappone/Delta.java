@@ -16,12 +16,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
 import com.example.pouyakarimi.testappone.database.DBHandler;
 import com.example.pouyakarimi.testappone.objects.Note;
@@ -91,6 +86,12 @@ public class Delta extends AppCompatActivity
         deltaListView = (ListView) findViewById(R.id.deltaListView);
         deltaListView.setAdapter(noteArrayAdapter);
         deltaListView.setOnItemClickListener(listViewListener);
+
+        MenuItem nav_send = (MenuItem) findViewById(R.id.nav_send);
+        nav_send.setEnabled(true);
+        if(DBHandler.listOfUsers().isEmpty()){
+            nav_send.setEnabled(false);
+        }
     }
 
     @Override
@@ -146,6 +147,7 @@ public class Delta extends AppCompatActivity
         } else if (id == R.id.nav_send) {
             startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
