@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.pouyakarimi.testappone.All"
+    tools:showIn="@layout/app_bar_view_all">
+
+
+    <TextView
+        android:id="@+id/viewAllPlusTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:text="Plus:"
+        android:textColor="@android:color/holo_green_dark"
+        android:textStyle="bold|italic" />
+
+
+    <ListView
+        android:id="@+id/viewAllPlusListView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/spacer"
+        android:layout_alignParentTop="false"
+        android:layout_alignRight="@+id/viewAllPlusTextView"
+        android:layout_below="@+id/viewAllPlusTextView" />
+
+    <TextView
+        android:id="@+id/emptyViewAllPlusTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewAllPlusTextView"
+        android:text="No results found"
+        android:textAlignment="center"
+        android:textColor="@android:color/secondary_text_light"
+        android:visibility="invisible" />
+
+
+    <Space
+        android:id="@+id/spacer"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_centerInParent="true" />
+
+    <TextView
+        android:id="@+id/viewAllDeltaTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_below="@+id/spacer"
+        android:text="Delta:"
+        android:textColor="@android:color/holo_red_dark"
+        android:textStyle="bold|italic" />
+
+    <ListView
+        android:id="@+id/viewAllDeltaListView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignRight="@+id/viewAllDeltaTextView"
+        android:layout_below="@+id/viewAllDeltaTextView" />
+
+    <TextView
+        android:id="@+id/emptyViewAllDeltaTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewAllDeltaTextView"
+        android:text="No results found"
+        android:textAlignment="center"
+        android:textColor="@android:color/secondary_text_light"
+        android:visibility="invisible" />
+
+
+</RelativeLayout>
+

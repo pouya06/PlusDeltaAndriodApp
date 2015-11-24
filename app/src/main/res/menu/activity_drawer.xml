@@ -10,16 +10,24 @@
             android:title="Plus" />
         <item android:id="@+id/nav_delta" android:icon="@android:drawable/arrow_up_float"
             android:title="Delta" />
-        <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
-            android:title="Tools" />
+        <item
+            android:id="@+id/nav_view_all"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="View All" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Actions">
         <menu>
-            <item android:id="@+id/nav_share" android:icon="@android:drawable/ic_menu_share"
-                android:title="Share" />
+            <item
+                android:id="@+id/nav_delete_all_item"
+                android:icon="@android:drawable/ic_menu_delete"
+                android:title="Delete All Items" />
+            <item
+                android:id="@+id/nav_delete_all_users"
+                android:icon="@android:drawable/ic_menu_delete"
+                android:title="Delete All Users" />
             <item android:id="@+id/nav_send" android:icon="@android:drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Send Email" />
         </menu>
     </item>
 

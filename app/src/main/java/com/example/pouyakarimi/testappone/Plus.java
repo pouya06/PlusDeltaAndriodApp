@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,6 +45,7 @@ public class Plus extends AppCompatActivity
     private TextView primaryEmail;
     private TextView primaryUser;
     private String[] bodyOfEmail;
+    private TextView plusNoDataMsg;
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -99,27 +99,27 @@ public class Plus extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.plus, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.plus, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -137,9 +137,15 @@ public class Plus extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), Delta.class);
             startActivity(intent);
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_view_all) {
+            Intent intent = new Intent(getApplicationContext(), All.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_delete_all_item) {
+            deleteAllDialog(true);
+
+        } else if (id == R.id.nav_delete_all_users) {
+            deleteAllDialog(false);
 
         } else if (id == R.id.nav_send) {
             startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
@@ -221,6 +227,41 @@ public class Plus extends AppCompatActivity
         deleteAlertDialogBuilder.show();
     }
 
+    private void deleteAllDialog(final boolean isNotes) {
+        AlertDialog.Builder deleteAlertDialogBuilder = new AlertDialog.Builder(this);
+        if (isNotes) {
+            deleteAlertDialogBuilder.setTitle("Deleting All Items ...");
+        } else {
+            deleteAlertDialogBuilder.setTitle("Deleting All Users ...");
+        }
+        deleteAlertDialogBuilder.setMessage("Are you sure ???");
+        deleteAlertDialogBuilder.setIcon(android.R.drawable.ic_menu_delete);
+        deleteAlertDialogBuilder.setCancelable(true)
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                if (isNotes) {
+                                    DBHandler.deleteAllNotes();
+                                    refreshNoteList();
+                                } else {
+                                    DBHandler.deleteAllUser();
+                                    getPrimaryUserFromDb();
+                                }
+                                Toast.makeText(Plus.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                .setNeutralButton("No",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                Toast.makeText(Plus.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+        deleteAlertDialogBuilder.show();
+    }
+
     private void openDialogHelper(View view, String title, String color, String buttonPositive, String buttonNegative, final boolean isSave, final Note noteForAction){
         LayoutInflater li = LayoutInflater.from(this);
         final View promptsView = li.inflate(R.layout.prompts, null);
@@ -279,6 +320,16 @@ public class Plus extends AppCompatActivity
         Toast.makeText(Plus.this, StaticMessages.EDITED_MESSAGE, Toast.LENGTH_LONG).show();
     }
 
+    private void checkTheListView() {
+        plusNoDataMsg = (TextView) findViewById(R.id.emptyPlusTextView);
+
+        if (plusListView.getCount() == 0) {
+            plusNoDataMsg.setVisibility(View.VISIBLE);
+        } else {
+            plusNoDataMsg.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void refreshNoteList() {
         AsyncTask<Void,Void,List<Note>> asyncTask = new AsyncTask<Void, Void, List<Note>>() {
             @Override
@@ -286,13 +337,12 @@ public class Plus extends AppCompatActivity
                 return DBHandler.notesArray(1);
             }
 
-
             @Override
-            protected void onPostExecute(List<Note> notesList)
-            {
+            protected void onPostExecute(List<Note> notesList) {
                 notes.clear();
                 notes.addAll(notesList);
                 noteArrayAdapter.notifyDataSetChanged();
+                checkTheListView();
             }
         };
         asyncTask.execute();

@@ -12,18 +12,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pouyakarimi.testappone.adapters.UserArrayAdaptor;
+import com.example.pouyakarimi.testappone.adapters.NoteArrayAdapter;
 import com.example.pouyakarimi.testappone.database.DBHandler;
+import com.example.pouyakarimi.testappone.objects.Note;
 import com.example.pouyakarimi.testappone.objects.User;
 import com.example.pouyakarimi.testappone.statics.StaticMessages;
 import com.example.pouyakarimi.testappone.utils.EmailUtil;
@@ -31,34 +28,26 @@ import com.example.pouyakarimi.testappone.utils.EmailUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Users extends AppCompatActivity
+public class All extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private TextView textViewUser;
-    private EditText userNameInput;
-    private EditText userEmailInput;
-    private Switch primarySwitch;
     private DBHandler DBHandler;
-    private UserArrayAdaptor userArrayAdaptor;
-    private User user;
-    private List<User> users = new ArrayList<>();
-    private ListView userListView;
     private TextView primaryEmail;
     private TextView primaryUser;
-    private String[] bodyPlus;
-    private TextView userNoDataMsg;
-    private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            User userForAction = (User) parent.getItemAtPosition(position);
-            onDeleteADialog(userForAction);
-        }
-    };
+    private ListView viewAllPlus;
+    private ListView viewAllDelta;
+    private TextView plusNoDataMsg;
+    private TextView deltaNoDataMsg;
+    private NoteArrayAdapter plusNoteArrayAdapter;
+    private NoteArrayAdapter deltaNoteArrayAdapter;
+    private List<Note> plusNotes = new ArrayList<>();
+    private List<Note> deltaNotes = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.users);
+        setContentView(R.layout.view_all_acivity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -74,47 +63,44 @@ public class Users extends AppCompatActivity
         View header = View.inflate(this, R.layout.drawer_header, null);
         navigationView.addHeaderView(header);
 
-        user = new User();
         DBHandler = new DBHandler(this, null, null, 1);
-
-        userArrayAdaptor = new UserArrayAdaptor(this, 0, users);
 
         primaryEmail = (TextView) header.findViewById(R.id.nav_primary_email);
         primaryUser = (TextView) header.findViewById(R.id.nav_primary_user);
 
         getPrimaryUserFromDb();
 
-        userListView = (ListView) findViewById(R.id.userListView);
-        userListView.setAdapter(userArrayAdaptor);
-        userListView.setOnItemClickListener(listViewListener);
+        plusNoteArrayAdapter = new NoteArrayAdapter(this, 0, plusNotes);
+        deltaNoteArrayAdapter = new NoteArrayAdapter(this, 0, deltaNotes);
+
+        viewAllPlus = (ListView) findViewById(R.id.viewAllPlusListView);
+        viewAllPlus.setAdapter(plusNoteArrayAdapter);
+        viewAllPlus.setClickable(false);
+
+        viewAllDelta = (ListView) findViewById(R.id.viewAllDeltaListView);
+        viewAllDelta.setAdapter(deltaNoteArrayAdapter);
+        viewAllDelta.setClickable(false);
+
+        refreshPlusNoteList();
+        refreshDeltaNoteList();
 
     }
 
-    private void onDeleteADialog(final User userForAction) {
-        AlertDialog.Builder deleteAlertDialogBuilder = new AlertDialog.Builder(this);
-        deleteAlertDialogBuilder.setTitle("Deleting Item ...");
-        deleteAlertDialogBuilder.setMessage("Are you sure ???");
-        deleteAlertDialogBuilder.setIcon(android.R.drawable.ic_menu_delete);
-        deleteAlertDialogBuilder.setCancelable(true)
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                DBHandler.deleteUserRow(userForAction);
-                                refreshUserList();
-                                getPrimaryUserFromDb();
-                                Toast.makeText(Users.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_LONG).show();
-                            }
-                        })
-                .setNeutralButton("No",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                                Toast.makeText(Users.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
-                            }
-                        });
-        deleteAlertDialogBuilder.show();
+    private void checkTheListView() {
+        plusNoDataMsg = (TextView) findViewById(R.id.emptyViewAllPlusTextView);
+        deltaNoDataMsg = (TextView) findViewById(R.id.emptyViewAllDeltaTextView);
+
+        if (viewAllPlus.getCount() == 0) {
+            plusNoDataMsg.setVisibility(View.VISIBLE);
+        } else {
+            plusNoDataMsg.setVisibility(View.INVISIBLE);
+        }
+
+        if (viewAllDelta.getCount() == 0) {
+            deltaNoDataMsg.setVisibility(View.VISIBLE);
+        } else {
+            deltaNoDataMsg.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -130,7 +116,7 @@ public class Users extends AppCompatActivity
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.users, menu);
+//        getMenuInflater().inflate(R.menu.view_all, menu);
 //        return true;
 //    }
 //
@@ -156,16 +142,18 @@ public class Users extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_users) {
-
+            Intent intent = new Intent(getApplicationContext(), Users.class);
+            startActivity(intent);
         } else if (id == R.id.nav_plus) {
             Intent intent = new Intent(getApplicationContext(), Plus.class);
             startActivity(intent);
+
         } else if (id == R.id.nav_delta) {
             Intent intent = new Intent(getApplicationContext(), Delta.class);
             startActivity(intent);
+
         } else if (id == R.id.nav_view_all) {
-            Intent intent = new Intent(getApplicationContext(), All.class);
-            startActivity(intent);
+
         } else if (id == R.id.nav_delete_all_item) {
             deleteAllDialog(true);
 
@@ -181,89 +169,39 @@ public class Users extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshUserList();
-    }
-
-    public void openUserDialog(View view) {
-        LayoutInflater li = LayoutInflater.from(this);
-        final View promptsView = li.inflate(R.layout.userprompts, null);
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        alertDialogBuilder.setView(promptsView);
-
-        textViewUser = (TextView) promptsView.findViewById(R.id.textViewUserDialogUserInput);
-        textViewUser.setText("User");
-
-        userNameInput = (EditText) promptsView.findViewById(R.id.editTextNameDialogUserInput);
-        userEmailInput = (EditText) promptsView.findViewById(R.id.editTextEmailDialogUserInput);
-        primarySwitch = (Switch) promptsView.findViewById(R.id.primarySwitch);
-
-        if (DBHandler.IsThereAPrimaryUser()) {
-            primarySwitch.setEnabled(false);
-        } else {
-            primarySwitch.setEnabled(true);
-        }
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Add",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                if (EmailUtil.isEmailValid(userEmailInput.getText().toString())) {
-                                    user.setName(userNameInput.getText().toString());
-                                    user.setEmail(userEmailInput.getText().toString());
-                                    user.setisItPrimary(primarySwitch.isChecked());
-                                    DBHandler.addNewUserRow(user);
-                                    refreshUserList();
-                                    getPrimaryUserFromDb();
-                                    Toast.makeText(Users.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(Users.this, StaticMessages.VALID_EMAIL_MESSAGE, Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        })
-                .setNeutralButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                Toast.makeText(Users.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
-                            }
-                        });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.show();
-    }
-
-    private void checkTheListView() {
-        userNoDataMsg = (TextView) findViewById(R.id.emptyUserTextView);
-
-        if (userListView.getCount() == 0) {
-            userNoDataMsg.setVisibility(View.VISIBLE);
-        } else {
-            userNoDataMsg.setVisibility(View.INVISIBLE);
-        }
-    }
-
-
-    private void refreshUserList() {
-        AsyncTask<Void, Void, List<User>> asyncTask = new AsyncTask<Void, Void, List<User>>() {
+    private void refreshPlusNoteList() {
+        AsyncTask<Void, Void, List<Note>> asyncTask = new AsyncTask<Void, Void, List<Note>>() {
             @Override
-            protected List<User> doInBackground(Void... params) {
-                return DBHandler.listOfUsers();
+            protected List<Note> doInBackground(Void... params) {
+                return DBHandler.notesArray(1);
             }
 
 
             @Override
-            protected void onPostExecute(List<User> userList) {
-                users.clear();
-                users.addAll(userList);
-                userArrayAdaptor.notifyDataSetChanged();
+            protected void onPostExecute(List<Note> notesList) {
+                plusNotes.clear();
+                plusNotes.addAll(notesList);
+                plusNoteArrayAdapter.notifyDataSetChanged();
+                checkTheListView();
+            }
+        };
+        asyncTask.execute();
+
+    }
+
+    private void refreshDeltaNoteList() {
+        AsyncTask<Void, Void, List<Note>> asyncTask = new AsyncTask<Void, Void, List<Note>>() {
+            @Override
+            protected List<Note> doInBackground(Void... params) {
+                return DBHandler.notesArray(0);
+            }
+
+
+            @Override
+            protected void onPostExecute(List<Note> notesList) {
+                deltaNotes.clear();
+                deltaNotes.addAll(notesList);
+                deltaNoteArrayAdapter.notifyDataSetChanged();
                 checkTheListView();
             }
         };
@@ -287,11 +225,14 @@ public class Users extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int id) {
                                 if (isNotes) {
                                     DBHandler.deleteAllNotes();
+                                    refreshPlusNoteList();
+                                    refreshDeltaNoteList();
                                 } else {
                                     DBHandler.deleteAllUser();
                                     getPrimaryUserFromDb();
                                 }
-                                Toast.makeText(Users.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_SHORT).show();
+
+                                Toast.makeText(All.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         })
                 .setNeutralButton("No",
@@ -299,7 +240,7 @@ public class Users extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                Toast.makeText(Users.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(All.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         });
         deleteAlertDialogBuilder.show();
@@ -320,7 +261,7 @@ public class Users extends AppCompatActivity
                     primaryUser.setText(user.getName());
                     primaryEmail.setTextColor(Color.WHITE);
                 } else {
-                    primaryEmail.setText("Please set up your users!");
+                    primaryEmail.setText("Please set up your users");
                     primaryUser.setText("Plus & Delta");
                     primaryEmail.setTextColor(Color.RED);
                 }

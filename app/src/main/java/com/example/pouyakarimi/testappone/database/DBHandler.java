@@ -122,6 +122,18 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void deleteAllUser() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_USER);
+        db.close();
+    }
+
+    public void deleteAllNotes() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NOTES);
+        db.close();
+    }
+
     public ArrayList<Note> notesArray(int isPlus) {
         ArrayList<Note> arrayNote = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
