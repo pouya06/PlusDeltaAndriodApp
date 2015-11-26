@@ -46,6 +46,7 @@ public class Plus extends AppCompatActivity
     private TextView primaryUser;
     private String[] bodyOfEmail;
     private TextView plusNoDataMsg;
+    private Boolean isThereAOne = false;
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -53,6 +54,7 @@ public class Plus extends AppCompatActivity
             openDialogActionDelta(noteForAction);
         }
     };
+    private ArrayList<User> users;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,8 @@ public class Plus extends AppCompatActivity
         plusListView = (ListView) findViewById(R.id.plusListView);
         plusListView.setAdapter(noteArrayAdapter);
         plusListView.setOnItemClickListener(listViewListener);
+
+        IsThereAUser();
     }
 
     @Override
@@ -148,7 +152,11 @@ public class Plus extends AppCompatActivity
             deleteAllDialog(false);
 
         } else if (id == R.id.nav_send) {
-            startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
+            if(isThereAOne){
+                startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
+            }else{
+                alertNoUser();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -286,7 +294,11 @@ public class Plus extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 if (isSave)
-                                    save();
+                                    if (userInput.getText().toString().isEmpty()) {
+                                        Toast.makeText(Plus.this, StaticMessages.VALID_ENTRY_MESSAGE, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        save();
+                                    }
                                 else
                                     edit(noteForAction);
                             }
@@ -347,6 +359,34 @@ public class Plus extends AppCompatActivity
         };
         asyncTask.execute();
 
+    }
+
+    private void alertNoUser(){
+        AlertDialog.Builder noUserMessage = new AlertDialog.Builder(this);
+        noUserMessage.setTitle("Warning!!");
+        noUserMessage.setMessage("You need to have at least one user");
+        noUserMessage.setIcon(android.R.drawable.stat_sys_warning);
+        noUserMessage.setCancelable(true)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        noUserMessage.show();
+    }
+
+    private void IsThereAUser() {
+
+        AsyncTask<Void, Void, Boolean> asyncTask = new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                return isThereAOne = DBHandler.isThereExistAUser();
+            }
+
+        };
+        asyncTask.execute();
     }
 
     private void getPrimaryUserFromDb() {

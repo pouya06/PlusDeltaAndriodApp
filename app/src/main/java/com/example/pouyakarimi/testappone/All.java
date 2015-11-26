@@ -42,7 +42,7 @@ public class All extends AppCompatActivity
     private NoteArrayAdapter deltaNoteArrayAdapter;
     private List<Note> plusNotes = new ArrayList<>();
     private List<Note> deltaNotes = new ArrayList<>();
-
+    private Boolean isThereAOne = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +83,7 @@ public class All extends AppCompatActivity
 
         refreshPlusNoteList();
         refreshDeltaNoteList();
+        IsThereAUser();
 
     }
 
@@ -161,7 +162,11 @@ public class All extends AppCompatActivity
             deleteAllDialog(false);
 
         } else if (id == R.id.nav_send) {
-            startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
+            if(isThereAOne){
+                startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
+            }else{
+                alertNoUser();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -244,6 +249,34 @@ public class All extends AppCompatActivity
                             }
                         });
         deleteAlertDialogBuilder.show();
+    }
+
+    private void alertNoUser(){
+        AlertDialog.Builder noUserMessage = new AlertDialog.Builder(this);
+        noUserMessage.setTitle("Warning!!");
+        noUserMessage.setMessage("You need to have at least one user");
+        noUserMessage.setIcon(android.R.drawable.stat_sys_warning);
+        noUserMessage.setCancelable(true)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        noUserMessage.show();
+    }
+
+    private void IsThereAUser() {
+
+        AsyncTask<Void, Void, Boolean> asyncTask = new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                return isThereAOne = DBHandler.isThereExistAUser();
+            }
+
+        };
+        asyncTask.execute();
     }
 
     private void getPrimaryUserFromDb() {

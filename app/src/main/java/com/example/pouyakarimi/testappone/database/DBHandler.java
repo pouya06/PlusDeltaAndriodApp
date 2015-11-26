@@ -66,14 +66,15 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public void addNewNoteRow(Note note) {
-        ContentValues values = new ContentValues();
-        values.put(NOTE_COLUMN_TEXT, note.getText());
-        values.put(NOTE_COLUMN_ISPLUS, note.isItPlus() ? 1 : 0);
-        values.put(NOTE_COLUMN_CREATEDAT, DateUtil.currentDate());
-        SQLiteDatabase db = getWritableDatabase();
-        db.insert(TABLE_NOTES, null, values);
-        db.close();
-
+        if (!note.getText().isEmpty()) {
+            ContentValues values = new ContentValues();
+            values.put(NOTE_COLUMN_TEXT, note.getText());
+            values.put(NOTE_COLUMN_ISPLUS, note.isItPlus() ? 1 : 0);
+            values.put(NOTE_COLUMN_CREATEDAT, DateUtil.currentDate());
+            SQLiteDatabase db = getWritableDatabase();
+            db.insert(TABLE_NOTES, null, values);
+            db.close();
+        }
     }
 
     public void addNewUserRow(User user) {
@@ -172,13 +173,21 @@ public class DBHandler extends SQLiteOpenHelper {
         return user;
     }
 
-    public Boolean IsThereAPrimaryUser() {
+    public Boolean isThereAPrimaryUser() {
         SQLiteDatabase db = getWritableDatabase();
         String query = "Select * from " + TABLE_USER + " where " + USER_COLUMN_ISPRIMARY + "='1';";
         Cursor cursor = db.rawQuery(query, null);
 
         return cursor.getCount() != 0;
 
+    }
+
+    public Boolean isThereExistAUser() {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "Select * from " + TABLE_USER;
+        Cursor cursor = db.rawQuery(query, null);
+
+        return cursor.getCount() != 0;
     }
 
     public ArrayList<User> listOfUsers() {

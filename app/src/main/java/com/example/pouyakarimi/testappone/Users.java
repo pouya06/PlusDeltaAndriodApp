@@ -173,7 +173,11 @@ public class Users extends AppCompatActivity
             deleteAllDialog(false);
 
         } else if (id == R.id.nav_send) {
-            startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
+            if (users.isEmpty()) {
+                alertNoUser();
+            } else {
+                startActivity(EmailUtil.sendEmail(DBHandler.notesArray(1), DBHandler.notesArray(0), DBHandler.listOfUsers()));
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -202,7 +206,7 @@ public class Users extends AppCompatActivity
         userEmailInput = (EditText) promptsView.findViewById(R.id.editTextEmailDialogUserInput);
         primarySwitch = (Switch) promptsView.findViewById(R.id.primarySwitch);
 
-        if (DBHandler.IsThereAPrimaryUser()) {
+        if (DBHandler.isThereAPrimaryUser()) {
             primarySwitch.setEnabled(false);
         } else {
             primarySwitch.setEnabled(true);
@@ -250,6 +254,20 @@ public class Users extends AppCompatActivity
         }
     }
 
+    private void alertNoUser() {
+        AlertDialog.Builder noUserMessage = new AlertDialog.Builder(this);
+        noUserMessage.setTitle("Warning!!");
+        noUserMessage.setMessage("You need to have at least one user");
+        noUserMessage.setIcon(android.R.drawable.stat_sys_warning);
+        noUserMessage.setCancelable(true)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        noUserMessage.show();
+    }
 
     private void refreshUserList() {
         AsyncTask<Void, Void, List<User>> asyncTask = new AsyncTask<Void, Void, List<User>>() {
