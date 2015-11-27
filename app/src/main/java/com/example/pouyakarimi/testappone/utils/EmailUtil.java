@@ -32,15 +32,15 @@ public class EmailUtil {
     public static Intent sendEmail(ArrayList<Note> bodyPlus, ArrayList<Note> bodyyDelta, ArrayList<User> users) {
         Intent intent = new Intent();
         intent.setData(Uri.parse("mailto:"));
-        String[] to = listofUsers(users);
+        String[] to = listOfUsers(users);
         intent.putExtra(Intent.EXTRA_EMAIL, to);
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Plus & Delta");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "+ / ∆");
         intent.putExtra(Intent.EXTRA_TEXT, concatBody(bodyPlus, bodyyDelta));
         intent.setType("message/rfc822");
         return Intent.createChooser(intent, "Send Email");
     }
 
-    private static String[] listofUsers(ArrayList<User> users) {
+    private static String[] listOfUsers(ArrayList<User> users) {
         ArrayList<String> resultList = new ArrayList<>();
         if (!users.isEmpty()) {
             for (User user : users) {
@@ -54,19 +54,19 @@ public class EmailUtil {
         return resultArr;
     }
 
-    public static String concatBody(ArrayList<Note> bodyPlus, ArrayList<Note> bodyyDelta) {
+    public static String concatBody(ArrayList<Note> bodyPlus, ArrayList<Note> bodyDelta) {
         String result = null;
         if (!bodyPlus.isEmpty()) {
-            result = "+Pluses+\n\n";
+            result = "PLUSES:\n";
             for (Note plus : bodyPlus) {
-                result += "+  " + plus.getText() + ".\n";
+                result += "\t--  " + plus.getText() + ".\n";
             }
         }
-        if (!bodyyDelta.isEmpty()) {
+        if (!bodyDelta.isEmpty()) {
             result += "\n\n\n";
-            result += "∆Deltas∆\n\n";
-            for (Note delta : bodyyDelta) {
-                result += "∆  " + delta.getText() + ".\n";
+            result += "DELTAS:\n";
+            for (Note delta : bodyDelta) {
+                result += "\t--  " + delta.getText() + ".\n";
             }
         }
         return result;

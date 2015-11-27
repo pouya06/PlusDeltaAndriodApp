@@ -294,7 +294,7 @@ public class All extends AppCompatActivity
                     primaryUser.setText(user.getName());
                     primaryEmail.setTextColor(Color.WHITE);
                 } else {
-                    primaryEmail.setText("Please set up your users");
+                    primaryEmail.setText("Please set up your primary user!");
                     primaryUser.setText("Plus & Delta");
                     primaryEmail.setTextColor(Color.RED);
                 }

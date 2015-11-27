@@ -103,7 +103,7 @@ public class Users extends AppCompatActivity
                                 DBHandler.deleteUserRow(userForAction);
                                 refreshUserList();
                                 getPrimaryUserFromDb();
-                                Toast.makeText(Users.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Users.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         })
                 .setNeutralButton("No",
@@ -111,7 +111,7 @@ public class Users extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                Toast.makeText(Users.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Users.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         });
         deleteAlertDialogBuilder.show();
@@ -225,9 +225,9 @@ public class Users extends AppCompatActivity
                                     DBHandler.addNewUserRow(user);
                                     refreshUserList();
                                     getPrimaryUserFromDb();
-                                    Toast.makeText(Users.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(Users.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(Users.this, StaticMessages.VALID_EMAIL_MESSAGE, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(Users.this, StaticMessages.VALID_EMAIL_MESSAGE, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         })
@@ -236,7 +236,7 @@ public class Users extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
-                                Toast.makeText(Users.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Users.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -338,7 +338,7 @@ public class Users extends AppCompatActivity
                     primaryUser.setText(user.getName());
                     primaryEmail.setTextColor(Color.WHITE);
                 } else {
-                    primaryEmail.setText("Please set up your users!");
+                    primaryEmail.setText("Please set up your primary user!");
                     primaryUser.setText("Plus & Delta");
                     primaryEmail.setTextColor(Color.RED);
                 }

@@ -185,7 +185,6 @@ public class Plus extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 onDeleteADialog(noteForAction);
-                                Toast.makeText(Plus.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
                             }
                         })
                 .setNeutralButton("Cancel",
@@ -193,7 +192,7 @@ public class Plus extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                Toast.makeText(Plus.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Plus.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         })
                 .setNegativeButton("Edit",
@@ -221,7 +220,7 @@ public class Plus extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int id) {
                                 DBHandler.deleteNoteRow(noteForAction);
                                 refreshNoteList();
-                                Toast.makeText(Plus.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Plus.this, StaticMessages.DELETED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         })
                 .setNeutralButton("No",
@@ -229,7 +228,7 @@ public class Plus extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                Toast.makeText(Plus.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Plus.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         });
         deleteAlertDialogBuilder.show();
@@ -308,7 +307,7 @@ public class Plus extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
-                                Toast.makeText(Plus.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_LONG).show();
+                                Toast.makeText(Plus.this, StaticMessages.CANCELED_MESSAGE, Toast.LENGTH_SHORT).show();
                             }
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -321,7 +320,7 @@ public class Plus extends AppCompatActivity
         note.setIsItPlus(true);
         DBHandler.addNewNoteRow(note);
         refreshNoteList();
-        Toast.makeText(Plus.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_LONG).show();
+        Toast.makeText(Plus.this, StaticMessages.SAVED_MESSAGE, Toast.LENGTH_SHORT).show();
     }
 
     private void edit(Note noteForAction) {
@@ -329,7 +328,7 @@ public class Plus extends AppCompatActivity
         noteForAction.setIsItPlus(true);
         DBHandler.updateNoteRow(noteForAction);
         refreshNoteList();
-        Toast.makeText(Plus.this, StaticMessages.EDITED_MESSAGE, Toast.LENGTH_LONG).show();
+        Toast.makeText(Plus.this, StaticMessages.EDITED_MESSAGE, Toast.LENGTH_SHORT).show();
     }
 
     private void checkTheListView() {
@@ -404,7 +403,7 @@ public class Plus extends AppCompatActivity
                     primaryUser.setText(user.getName());
                     primaryEmail.setTextColor(Color.WHITE);
                 } else {
-                    primaryEmail.setText("Please set up your users");
+                    primaryEmail.setText("Please set up your primary user!");
                     primaryUser.setText("Plus & Delta");
                     primaryEmail.setTextColor(Color.RED);
                 }
